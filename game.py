@@ -16,6 +16,9 @@ def get_range_for_difficulty(difficulty: str):
         return 1, 20
     if difficulty == "Normal":
         return 1, 100
+    # Collab fix: Ahmed spotted that "Hard" used a smaller range (1-50) than
+    # "Normal", so harder was actually easier. Claude corrected it to 1-200 so
+    # the range grows with difficulty.
     if difficulty == "Hard":
         return 1, 200
     return 1, 100
@@ -46,6 +49,9 @@ def parse_guess(raw: str):
 def check_guess(guess, secret):
     if guess == secret:
         return "Win", "🎉 Correct!"
+    # Collab fix: Ahmed noticed the hints pointed the wrong way in-game (a guess
+    # that was too high told you to go HIGHER). Claude swapped the messages so
+    # "Too High" -> go LOWER and "Too Low" -> go HIGHER.
     if guess > secret:
         return "Too High", "📉 Go LOWER!"
     return "Too Low", "📈 Go HIGHER!"
@@ -53,11 +59,17 @@ def check_guess(guess, secret):
 
 def update_score(current_score: int, outcome: str, attempt_number: int):
     if outcome == "Win":
+        # Collab fix: the original used (attempt_number + 1), which docked points
+        # for a first-try win. Ahmed flagged the off-by-one; Claude changed it to
+        # (attempt_number - 1) so a 1st-attempt win earns the full 100.
         points = 100 - 10 * (attempt_number - 1)
         if points < 10:
             points = 10
         return current_score + points
 
+    # Collab fix: "Too High" used to ADD 5 points on even attempts (rewarding a
+    # wrong guess). Ahmed caught the weird score jumps; Claude made both wrong
+    # outcomes consistently subtract 5.
     if outcome == "Too High":
         return current_score - 5
 
@@ -87,6 +99,10 @@ class TurnResult:
 
 def new_game(low: int, high: int, rng=random) -> GameState:
     """Create a fresh game state with a secret in [low, high]."""
+    # Collab fix: "New Game" used to reuse a 1-100 secret and leave the old
+    # score/attempts/history behind. Ahmed reported stale games; Claude moved
+    # all reset logic here so a fresh GameState (attempts=0) is built from the
+    # actual low/high range every time.
     return GameState(secret=rng.randint(low, high))
 
 
@@ -101,6 +117,10 @@ def apply_guess(state: GameState, raw_guess: str, attempt_limit: int):
 
     state.history.append(guess_int)
 
+    # Collab fix: the old UI flipped the secret to a string on every other turn
+    # (attempts % 2), so comparisons silently broke. Ahmed traced the random
+    # "wrong" results; Claude removed the flip and always compares against the
+    # real int secret.
     outcome, message = check_guess(guess_int, state.secret)
     state.score = update_score(state.score, outcome, state.attempts)
 

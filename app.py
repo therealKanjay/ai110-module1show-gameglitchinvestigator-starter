@@ -29,6 +29,9 @@ state = st.session_state.game
 
 st.subheader("Make a guess")
 
+# Collab fix: this prompt was hardcoded to "between 1 and 100" regardless of
+# difficulty. Ahmed noticed it lied on Easy/Hard; Claude wired it to the real
+# {low}/{high} from the selected difficulty.
 st.info(
     f"Guess a number between {low} and {high}. "
     f"Attempts left: {attempt_limit - state.attempts}"
