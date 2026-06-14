@@ -33,20 +33,21 @@ It wrote the code, ran away, and now the game is unplayable.
 
 Describe your fixed game in numbered steps so a reader can follow along without watching a video:
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+1. User enters a guess of 40 --> "Too High"
+2. User enters a guess of 10 --> "Too High"
+3. User enters a guess of 5 --> "Too Low"
+4. User enters a guess of 6 --> "Guess correct! You win!"
+5. Score updates correctly as well
 
 **Screenshot** *(optional)*: <!-- Insert a screenshot of your fixed, winning game here -->
 
 ## 🧪 Test Results
 
 ```
-# Paste your pytest output here, e.g.:
+# Paste your pytest output here, e.g.: 
 # pytest tests/
 # ========================= X passed in 0.XXs =========================
+======================== 6 passed in 0.01s ===============================
 ```
 
 ## 🚀 Stretch Features
